@@ -30,12 +30,14 @@ public class Game {
 //        List<int[]> moves = new ArrayList<int[]>();
 //        board
 //    }
-    public void robotMove(){
+    public int[] robotMove(){
         List<int[]> moves = new ArrayList<int[]>();
         moves = board.getAvailableMoves();
         int selection = random.nextInt(moves.size());
         board.updateBoard(ROBOT, moves.get(selection));
-//        return moves.get(selection);
+        System.out.print("\nHERE1: " + moves.get(selection)[0] + " " + moves.get(selection)[1]);
+        return moves.get(selection);
+        
     }
     
     public void humanMove(int[] position){

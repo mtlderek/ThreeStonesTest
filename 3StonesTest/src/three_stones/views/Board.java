@@ -64,7 +64,11 @@ public class Board{
             str += "\n" + (i); //vertical index
             if(i < 10){str += " ";} //fixes alignment issues
             for(int j = 0; j < 11; j++){
-                str += " " + gameBoard[i][j];                
+                if(gameBoard[i][j] == 9) {
+                    str += "  "; 
+                } else {
+                str += " " + gameBoard[i][j]; 
+                }
             }   
         }
         str +="\n  ";
