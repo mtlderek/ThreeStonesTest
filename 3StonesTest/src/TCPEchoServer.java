@@ -3,6 +3,7 @@ import java.net.*;  // for Socket, ServerSocket, and InetAddress
 import java.io.*;   // for IOException and Input/OutputStream
 import three_stone.logic.Game;
 
+//C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoServer 4455
 public class TCPEchoServer {
 
     private static final int BUFSIZE = 32;	// Size of receive buffer
