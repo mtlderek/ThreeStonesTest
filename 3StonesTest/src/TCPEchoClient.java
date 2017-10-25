@@ -11,8 +11,8 @@ public class TCPEchoClient {
         System.out.println(board.toString());
         int counter = 0;
         Scanner kb = new Scanner(System.in);
-        verifyCorrectNumOfArgs(args);
-        String server = args[0]; // Server name or IP address
+
+        String server = getIpAddress();
 
         int servPort = 50000;
         Socket socket = new Socket(server, servPort);
@@ -50,13 +50,6 @@ public class TCPEchoClient {
         socket.close();
     }
     
-
-    public static void verifyCorrectNumOfArgs(String[] args) {
-        if ((args.length < 1) || (args.length > 2)) { // Test for correct # of args
-            throw new IllegalArgumentException("Parameter(s): <Server> "
-                    + " [<Port>]");
-        }
-    }
     
     public static int[] requestUserMove(){
         Scanner kb = new Scanner(System.in);
@@ -87,21 +80,30 @@ public class TCPEchoClient {
         }
         return move;
     }
-    public static void blah(){
+    public static String getIpAddress(){
+        String localIp = "";
         try{
-            InetAddress.getLocalHost().getHostAddress();
+            localIp = InetAddress.getLocalHost().getHostAddress();
         } catch(Exception e) {
             System.out.println("Unable to get local host ip");
         }
-        System.out.print("Choose the one of the following:");
-        System.out.print("1. Use localhost");
-        System.out.print("2. Enter ip address:");
+        System.out.println("Choose the one of the following:");
+        System.out.println("1. Use localhost");
+        System.out.println("2. Enter ip address:");
         Scanner kb = new Scanner(System.in);
         int userChoice = kb.nextInt();
         switch(userChoice){
-            case 1:
+            case 1: 
+                return localIp;
             case 2:
+                return getUserEnteredIp();
             default:
+                return null;
         }
+    }
+    
+    public static String getUserEnteredIp(){
+        Scanner kb = new Scanner(System.in);
+        return kb.nextLine();
     }
 }
