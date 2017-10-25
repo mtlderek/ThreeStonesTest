@@ -12,12 +12,12 @@ public class TCPEchoServer {
     public static void main(String[] args) throws IOException {
 
         Game game = new Game();
-        if (args.length != 1) // Test for correct # of args
-        {
-            throw new IllegalArgumentException("Parameter(s): <Port>");
-        }
-
-//        int servPort = Integer.parseInt(args[0]);
+//        if (args.length != 1) // Test for correct # of args
+//        {
+//            throw new IllegalArgumentException("Parameter(s): <Port>");
+//        }
+//
+////        int servPort = Integer.parseInt(args[0]);
         int servPort = 50000;
 
         // Create a server socket to accept client connection requests
@@ -29,9 +29,9 @@ public class TCPEchoServer {
 
         // Run forever, accepting and servicing connections
         int closecounter = 0;
-         Socket clntSock = servSock.accept();	// Get client connection
+//         Socket clntSock = servSock.accept();	// Get client connection
         for (;;) {
-//            Socket clntSock = servSock.accept();	// Get client connection
+            Socket clntSock = servSock.accept();	// Get client connection
 
             System.out.println("Handling client at "
                     + clntSock.getInetAddress().getHostAddress() + " on port "
@@ -41,19 +41,19 @@ public class TCPEchoServer {
             OutputStream out = clntSock.getOutputStream();
 
             // Receive until client closes connection, indicated by -1 return
-            int move[] = game.robotMove();
+//          int move[] = game.robotMove();
             
             while ((recvMsgSize = in.read(byteBuffer)) != -1) { //previously -1
 //                out.write(byteBuffer, 0, recvMsgSize);
-                System.out.println("recvMsgSize = " + recvMsgSize);
-                out.write(convertMoveToByteArray(game.robotMove()),0,recvMsgSize);
+                
+                
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
-            System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
-            System.out.println("sending: " + move[0] + " " + move[1]);
+                game.humanMove(new int[]{recvInts[1],recvInts[2]});
+                int move[] = game.robotMove();
+                out.write(convertMoveToByteArray(move),0,recvMsgSize);
+                System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
+                System.out.println("sending: " + move[0] + " " + move[1]);
             }
-            
-            
-            
             closecounter ++;
 //            System.out.println("Counter = " + counter);
             if(closecounter == 30){

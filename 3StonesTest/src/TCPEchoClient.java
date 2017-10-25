@@ -14,10 +14,9 @@ public class TCPEchoClient {
         verifyCorrectNumOfArgs(args);
         String server = args[0]; // Server name or IP address
 
-//        int servPort = (args.length == 2) ? Integer.parseInt(args[1]) : 7; //default port = 7?
         int servPort = 50000;
         Socket socket = new Socket(server, servPort);
-        while (counter < 15) {
+        while (counter < 15) { //this shuold be changed for a game over boolean
             int[] move = requestUserMove();
             
             byte[] byteBuffer = convertIntToByteArrays(move);
@@ -41,7 +40,7 @@ public class TCPEchoClient {
 
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
             //TODO: if first is 1, then equal valid
-            board.updateBoard(1, new int[]{move[1],move[2]}); //user's move
+            board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
 //            System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
             board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});
             System.out.println(board.toString());
@@ -87,5 +86,22 @@ public class TCPEchoClient {
             move[i] = bytes[i] & 0xFF; //converts to integer
         }
         return move;
+    }
+    public static void blah(){
+        try{
+            InetAddress.getLocalHost().getHostAddress();
+        } catch(Exception e) {
+            System.out.println("Unable to get local host ip");
+        }
+        System.out.print("Choose the one of the following:");
+        System.out.print("1. Use localhost");
+        System.out.print("2. Enter ip address:");
+        Scanner kb = new Scanner(System.in);
+        int userChoice = kb.nextInt();
+        switch(userChoice){
+            case 1:
+            case 2:
+            default:
+        }
     }
 }
