@@ -14,13 +14,14 @@ public class TCPEchoClient {
         verifyCorrectNumOfArgs(args);
         String server = args[0]; // Server name or IP address
 
-        int servPort = (args.length == 2) ? Integer.parseInt(args[1]) : 7; //default port = 7?
-            
+//        int servPort = (args.length == 2) ? Integer.parseInt(args[1]) : 7; //default port = 7?
+        int servPort = 50000;
+        Socket socket = new Socket(server, servPort);
         while (counter < 15) {
             int[] move = requestUserMove();
             
             byte[] byteBuffer = convertIntToByteArrays(move);
-            Socket socket = new Socket(server, servPort);
+//            Socket socket = new Socket(server, servPort);
             System.out.println("Connected to server...sending echo string");
 
             InputStream in = socket.getInputStream();
@@ -45,10 +46,11 @@ public class TCPEchoClient {
             board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});
             System.out.println(board.toString());
             counter++;
-            socket.close();
+//            socket.close();
         }
-//        socket.close();
+        socket.close();
     }
+    
 
     public static void verifyCorrectNumOfArgs(String[] args) {
         if ((args.length < 1) || (args.length > 2)) { // Test for correct # of args

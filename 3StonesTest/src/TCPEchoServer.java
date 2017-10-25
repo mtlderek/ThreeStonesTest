@@ -4,6 +4,7 @@ import java.io.*;   // for IOException and Input/OutputStream
 import three_stone.logic.Game;
 
 //C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoServer 4455
+//C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes
 public class TCPEchoServer {
 
     private static final int BUFSIZE = 32;	// Size of receive buffer
@@ -16,7 +17,8 @@ public class TCPEchoServer {
             throw new IllegalArgumentException("Parameter(s): <Port>");
         }
 
-        int servPort = Integer.parseInt(args[0]);
+//        int servPort = Integer.parseInt(args[0]);
+        int servPort = 50000;
 
         // Create a server socket to accept client connection requests
         ServerSocket servSock = new ServerSocket(servPort);
@@ -26,8 +28,10 @@ public class TCPEchoServer {
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
 
         // Run forever, accepting and servicing connections
+        int closecounter = 0;
+         Socket clntSock = servSock.accept();	// Get client connection
         for (;;) {
-            Socket clntSock = servSock.accept();	// Get client connection
+//            Socket clntSock = servSock.accept();	// Get client connection
 
             System.out.println("Handling client at "
                     + clntSock.getInetAddress().getHostAddress() + " on port "
@@ -38,15 +42,24 @@ public class TCPEchoServer {
 
             // Receive until client closes connection, indicated by -1 return
             int move[] = game.robotMove();
-            while ((recvMsgSize = in.read(byteBuffer)) != -1) {
-//                out.write(byteBuffer, 0, recvMsgSize);
-                out.write(convertMoveToByteArray(game.robotMove()),0,recvMsgSize);
-            }
-            int recvInts[] = convertBytesToIntArrays(byteBuffer);
-            System.out.print("received: " + recvInts[1] + " " + recvInts[2]);
-            System.out.print("sending: " + move[0] + " " + move[1]);
             
-            clntSock.close();						// Close the socket. This client is finished.
+            while ((recvMsgSize = in.read(byteBuffer)) != -1) { //previously -1
+//                out.write(byteBuffer, 0, recvMsgSize);
+                System.out.println("recvMsgSize = " + recvMsgSize);
+                out.write(convertMoveToByteArray(game.robotMove()),0,recvMsgSize);
+                int recvInts[] = convertBytesToIntArrays(byteBuffer);
+            System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
+            System.out.println("sending: " + move[0] + " " + move[1]);
+            }
+            
+            
+            
+            closecounter ++;
+//            System.out.println("Counter = " + counter);
+            if(closecounter == 30){
+                clntSock.close();
+            }
+//            clntSock.close();						// Close the socket. This client is finished.
 //      byteBuffer = null;
         }
 //    System.out.print("received: " + new String(byteBuffer));
