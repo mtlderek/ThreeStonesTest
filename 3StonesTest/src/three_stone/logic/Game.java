@@ -84,4 +84,8 @@ public class Game {
         return availableMoves.isEmpty();
     }
     
+    public void reset() {
+        board.reset();
+    }
+    
 }

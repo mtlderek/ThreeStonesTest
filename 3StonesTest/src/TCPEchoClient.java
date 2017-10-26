@@ -54,15 +54,16 @@ public class TCPEchoClient {
                 System.out.println("Game is Over");
                 if(userPlayAgain()){
                     System.out.println("User requested to play again");
-                    //reset board
+                    board.reset();
                 } else {
                     System.out.println("User requested to quit");
                 }
                 //show score and victor/loser
                 //promt user for new game
             } else if (recvInts[0] == 3){  //3 is error code
-                System.out.println("Invalid Move"); 
-                
+                System.out.println("Invalid Move");
+            } else if (recvInts[0] == 6){
+                System.out.println("New Game has begun");
             } else {
                 board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
                 board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});  

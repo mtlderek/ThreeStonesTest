@@ -48,15 +48,17 @@ public class TCPEchoServer {
 
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
                 //before this next line we need to validate.
-                int move[];
-                if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
+                int move[] = new int[3];
+                if (recvInts[0] == 6) { //user selects new game
+                    game.reset();
+                    move = new int[] {NEWGAME,0,1};
+                } else if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                     game.humanMove(new int[]{recvInts[1],recvInts[2]});
                     move = game.robotMove();
                     //check here if game is over
                     boolean gameOver = game.isGameOver();
                     if(gameOver){
-                        //change sendCode to 4, user needs to look for four
-//                        move[0] = GAMEOVER;
+                        System.out.print("Game is over");
                         out.write(convertMoveToByteArray(move, GAMEOVER),0,recvMsgSize);
                     } else {
                         out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
