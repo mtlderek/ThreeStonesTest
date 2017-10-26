@@ -73,4 +73,14 @@ public class Game {
         return false;
     }
     
+    /**
+     * If there are no available moves then all possible moves have been exhausted.
+     * game is over.
+     * @return 
+     */
+    public boolean isGameOver(){
+        List<int[]> availableMoves = getAvailableMoves();
+        return availableMoves.isEmpty();
+    }
+    
 }
