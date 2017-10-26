@@ -10,21 +10,18 @@ public class TCPEchoServer {
     private static final int BUFSIZE = 32;	// Size of receive buffer
 
     public static void main(String[] args) throws IOException {
-
+        
+//        sendCodes
+        int HUMAN = 1;
+        int ROBOT = 2;
+        int ERROR = 3;
         Game game = new Game();
-//        if (args.length != 1) // Test for correct # of args
-//        {
-//            throw new IllegalArgumentException("Parameter(s): <Port>");
-//        }
-//
-////        int servPort = Integer.parseInt(args[0]);
         int servPort = 50000;
-
         // Create a server socket to accept client connection requests
         ServerSocket servSock = new ServerSocket(servPort);
 
         int messageCount = 0;
-        int recvMsgSize;						// Size of received message
+        int recvMsgSize;  // Size of received message
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
 
         // Run forever, accepting and servicing connections
@@ -43,33 +40,38 @@ public class TCPEchoServer {
             // Receive until client closes connection, indicated by -1 return
 //          int move[] = game.robotMove();
             
-            while ((recvMsgSize = in.read(byteBuffer)) != -1) { //previously -1
+            while ((recvMsgSize = in.read(byteBuffer)) != -1) { //This represents a game
 //                out.write(byteBuffer, 0, recvMsgSize);
-                
-                
+
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
-                game.humanMove(new int[]{recvInts[1],recvInts[2]});
-                int move[] = game.robotMove();
-                out.write(convertMoveToByteArray(move),0,recvMsgSize);
+                //before this next line we need to validate.
+                int move[];
+                if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
+                    game.humanMove(new int[]{recvInts[1],recvInts[2]});
+                    move = game.robotMove();
+                    out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
+                } else {
+//                    send back error code as move
+                    move = new int[] {3,0,1}; //code for invalid move
+                    out.write(convertMoveToByteArray(move, ERROR),0,recvMsgSize);
+                }
+              
+//                game.humanMove(new int[]{recvInts[1],recvInts[2]});
+//                move[] = game.robotMove();
+                
                 System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
                 System.out.println("sending: " + move[0] + " " + move[1]);
             }
             closecounter ++;
-//            System.out.println("Counter = " + counter);
             if(closecounter == 30){
                 clntSock.close();
             }
-//            clntSock.close();						// Close the socket. This client is finished.
-//      byteBuffer = null;
         }
-//    System.out.print("received: " + new String(byteBuffer));
-
-        /* NOT REACHED */
     }
 
-    public static byte[] convertMoveToByteArray(int[] move){
+    public static byte[] convertMoveToByteArray(int[] move, int sendCode){
         int codedArray[] = new int[3];
-        codedArray[0] = 1;
+        codedArray[0] = sendCode;
         codedArray[1] = move[0];
         codedArray[2] = move[1];
         return convertIntToByteArrays(codedArray);

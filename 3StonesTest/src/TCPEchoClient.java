@@ -16,20 +16,17 @@ public class TCPEchoClient {
 
         int servPort = 50000;
         Socket socket = new Socket(server, servPort);
-        while (counter < 15) { //this shuold be changed for a game over boolean
-            int[] move = requestUserMove();
-            
+        while (counter < 30) { //this shuold be changed for a game over boolean
+            int[] move = requestUserMove();    
             byte[] byteBuffer = convertIntToByteArrays(move);
-//            Socket socket = new Socket(server, servPort);
-            System.out.println("Connected to server...sending echo string");
 
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
-            out.write(byteBuffer);						// Send the encoded string to the server
+            out.write(byteBuffer);	// Send the encoded string to the server
 
             // Receive the same string back from the server
-            int totalBytesRcvd = 0;						// Total bytes received so far
-            int bytesRcvd;								// Bytes received in last read
+            int totalBytesRcvd = 0;	// Total bytes received so far
+            int bytesRcvd;		// Bytes received in last read
             while (totalBytesRcvd < byteBuffer.length) {
                 if ((bytesRcvd = in.read(byteBuffer, totalBytesRcvd,
                         byteBuffer.length - totalBytesRcvd)) == -1) {
@@ -39,13 +36,17 @@ public class TCPEchoClient {
             }
 
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
-            //TODO: if first is 1, then equal valid
-            board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
-//            System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
-            board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});
+            
+            if (recvInts[0] == 3){  //3 is error code
+                System.out.println("Invalid Move"); 
+            } else {
+                board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
+                board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});   
+            }
+//            board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
+//            board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});
             System.out.println(board.toString());
             counter++;
-//            socket.close();
         }
         socket.close();
     }
@@ -58,7 +59,7 @@ public class TCPEchoClient {
         System.out.print("Enter Y coordinate: ");
         int y= kb.nextInt();
         int move[] = new int[3];
-        move[0] = 1; //1 indicating a move
+        move[0] = 1; //1 indicating a move from user
         move[1] = x;
         move[2] = y;
                 
@@ -80,6 +81,7 @@ public class TCPEchoClient {
         }
         return move;
     }
+    
     public static String getIpAddress(){
         String localIp = "";
         try{

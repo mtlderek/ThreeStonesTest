@@ -30,6 +30,11 @@ public class Board{
         this.stoneCount = 30;
         this.lastPlayed = new int[2];
     }
+    /**
+     * Gets any position where the current number is zero
+     * @param lastPlayed
+     * @return 
+     */
     public List<int[]> getAvailable(int[] lastPlayed){
         System.out.println("Last Played: "+lastPlayed[0]+" "+lastPlayed[1]);
         int x = lastPlayed[0];
@@ -91,6 +96,8 @@ public class Board{
      */
     public void updateBoard(int player, int[] position){
         gameBoard[position[1]][position[0]] = player;
+        lastPlayed[0] = position[0];
+        lastPlayed[1] = position[1];
         lastPlayedStr = "Last played move: " + position[0] + ", "+ position[1];
     }
     
