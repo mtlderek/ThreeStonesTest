@@ -15,6 +15,9 @@ public class TCPEchoServer {
         int HUMAN = 1;
         int ROBOT = 2;
         int ERROR = 3;
+        int GAMEOVER = 4;
+        int QUIT = 5;
+        int NEWGAME = 6;
         Game game = new Game();
         int servPort = 50000;
         // Create a server socket to accept client connection requests
@@ -49,7 +52,16 @@ public class TCPEchoServer {
                 if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                     game.humanMove(new int[]{recvInts[1],recvInts[2]});
                     move = game.robotMove();
-                    out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
+                    //check here if game is over
+                    boolean gameOver = game.isGameOver();
+                    if(gameOver){
+                        //change sendCode to 4, user needs to look for four
+//                        move[0] = GAMEOVER;
+                        out.write(convertMoveToByteArray(move, GAMEOVER),0,recvMsgSize);
+                    } else {
+                        out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
+                    }
+//                    out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
                 } else {
 //                    send back error code as move
                     move = new int[] {3,0,1}; //code for invalid move
