@@ -8,18 +8,17 @@ import three_stone.logic.Game;
 public class TCPEchoServer {
 
     private static final int BUFSIZE = 32;	// Size of receive buffer
+    private static final int HUMAN = 1;
+    private static final int ROBOT = 2;
+    private static final int ERROR = 3;
+    private static final int WIN = 6; //user win
+    private static final int LOSS = 7; //user loss
+    private static final int DRAW = 8;
+    private static final int QUIT = 5;
+    private static final int NEWGAME = 4;
 
     public static void main(String[] args) throws IOException {
-        
-//      sendCodes
-        int HUMAN = 1;
-        int ROBOT = 2;
-        int ERROR = 3;
-        int WIN = 6; //user win
-        int LOSS = 7; //user loss
-        int DRAW = 8;
-        int QUIT = 5;
-        int NEWGAME = 4;
+
         Game game = new Game();
         int servPort = 50000;
         // Create a server socket to accept client connection requests
@@ -51,17 +50,8 @@ public class TCPEchoServer {
                     boolean gameOver = game.isGameOver();
                     if(gameOver){
                         System.out.print("Game is over");
-                        if(game.getScore()[0] > game.getScore()[1] ){
-                            // ROBOT WINS
-                            out.write(convertMoveToByteArray(move, LOSS, game),0,recvMsgSize);                            
-                        } else if (game.getScore()[1] > game.getScore()[0] ) {
-                            // HUMAN WINS
-                            out.write(convertMoveToByteArray(move, WIN, game),0,recvMsgSize);
-                        } else {
-                            //DRAW
-                            out.write(convertMoveToByteArray(move, DRAW, game),0,recvMsgSize);
-                        }
-//                        out.write(convertMoveToByteArray(move, GAMEOVER, game),0,recvMsgSize);
+                        int matchResult =  determineVictor(game.getScore()[0], game.getScore()[1]);
+                        out.write(convertMoveToByteArray(move, matchResult, game),0,recvMsgSize);
                         game.reset();
 //                      
                     } else {
@@ -73,7 +63,6 @@ public class TCPEchoServer {
                     move = new int[] {3,0,1,0,0}; //code for invalid move
                     out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
                 }
-              
                 
                 System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
                 System.out.println("sending: " + move[0] + " " + move[1]);
@@ -105,5 +94,14 @@ public class TCPEchoServer {
         }
         return move;
     }
-
+    
+    public static int determineVictor(int robotScore, int humanScore){
+        if (robotScore > humanScore) {
+            return LOSS;
+        } else if (robotScore > humanScore) {
+            return WIN;
+        } else {
+            return DRAW;
+        }
+    }
 }
