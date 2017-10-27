@@ -47,17 +47,18 @@ public class TCPEchoServer {
                 } else if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                     game.humanMove(new int[]{recvInts[1],recvInts[2]});
                     move = game.robotMove();
-                    boolean gameOver = game.isGameOver();
-                    if(gameOver){
-                        System.out.print("Game is over");
-                        int matchResult =  determineVictor(game.getScore()[0], game.getScore()[1]);
-                        out.write(convertMoveToByteArray(move, matchResult, game),0,recvMsgSize);
-                        game.reset();
-//                      
-                    } else {
-                        out.write(convertMoveToByteArray(move, ROBOT, game),0,recvMsgSize);
-                    }
-//                    out.write(convertMoveToByteArray(move, ROBOT),0,recvMsgSize);
+//                    if(game.isGameOver()){
+//                        System.out.print("Game is over");
+//                        int matchResult =  determineVictor(game.getScore()[0], game.getScore()[1]);
+//                        out.write(convertMoveToByteArray(move, matchResult, game),0,recvMsgSize);
+//                        game.reset();
+////                      
+//                    } else {
+//                        out.write(convertMoveToByteArray(move, ROBOT, game),0,recvMsgSize);
+//                    }
+                    int sendCode = handleValidMove(game);
+                    out.write(convertMoveToByteArray(move, sendCode, game),0,recvMsgSize);
+                    if(sendCode > 6){game.reset();}
                 } else {
 //                    send back error code as move
                     move = new int[] {3,0,1,0,0}; //code for invalid move
@@ -103,5 +104,19 @@ public class TCPEchoServer {
         } else {
             return DRAW;
         }
+    }
+    
+    public static int handleValidMove(Game game){
+        if (game.isGameOver()) {
+            System.out.print("Game is over");
+            int matchResult = determineVictor(game.getScore()[0], game.getScore()[1]);
+            
+            game.reset();
+            return matchResult;
+//                      
+        } else {
+            return ROBOT;
+        }
+        
     }
 }
