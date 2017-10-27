@@ -127,7 +127,7 @@ public class Board{
         
         gameBoard = gameboard;
         lastPlayedStr = "";
-        lastPlayed = null;       
+        lastPlayed = new int[2];      
         
     }
     
@@ -226,6 +226,14 @@ public class Board{
     
     public void printScore(){
         System.out.println("Score:\rPlayer: "+playerScore+" Server: "+serverScore);
+    }
+    
+    public int getServerScore(){
+        return serverScore;
+    }
+    
+    public int getPlayerScore(){
+        return playerScore;
     }
     
     

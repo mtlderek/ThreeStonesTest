@@ -88,4 +88,8 @@ public class Game {
         board.reset();
     }
     
+    public int[] getScore(){
+        return new int[]{board.getServerScore(), board.getPlayerScore()};
+    }
+    
 }

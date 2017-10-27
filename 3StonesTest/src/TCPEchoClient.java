@@ -9,9 +9,12 @@ public class TCPEchoClient {
     int HUMAN = 1;
         int ROBOT = 2;
         int ERROR = 3;
-        int GAMEOVER = 4;
+        int WIN = 6; //user win
+        int LOSS = 7; //user loss
+        int DRAW = 8;
         int QUIT = 5;
-        int NEWGAME = 6;
+        int NEWGAME = 4;
+        int GAMEOVER = 9;
     public static void main(String[] args) throws IOException {
         
         
@@ -36,7 +39,7 @@ public class TCPEchoClient {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
             out.write(byteBuffer);	// Send the encoded string to the server
-
+            System.out.println("HERE");
             // Receive the same string back from the server
             int totalBytesRcvd = 0;	// Total bytes received so far
             int bytesRcvd;		// Bytes received in last read
@@ -49,17 +52,26 @@ public class TCPEchoClient {
             }
 
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
-            if (recvInts[0] == 4){ //GAME OVER
+            if (recvInts[0] >= 6){ //GAME OVER
                 board.updateBoard(2, new int[]{recvInts[1],recvInts[2]}); // updates ROBOTS last move
                 System.out.println("Game is Over");
+                if(recvInts[0] == 6){
+                    System.out.println ("YOU WIN!");
+                } else if (recvInts[0] == 7){
+                    System.out.println ("YOU LOSE!");
+                } else {
+                    System.out.println ("It's a draw!");
+                }
                 if(userPlayAgain()){
+                    System.out.println(board.toString());
+                    System.out.println ("SCORE\nROBOT: " + recvInts[3] + " - YOU: " + recvInts[4]);
+                    
                     System.out.println("User requested to play again");
                     board.reset();
+                    System.out.print(board.toString());
                 } else {
                     System.out.println("User requested to quit");
                 }
-                //show score and victor/loser
-                //promt user for new game
             } else if (recvInts[0] == 3){  //3 is error code
                 System.out.println("Invalid Move");
             } else if (recvInts[0] == 6){
@@ -68,10 +80,8 @@ public class TCPEchoClient {
                 board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
                 board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});  
                 System.out.println(board.toString());
+                System.out.println ("SCORE\nROBOT: " + recvInts[3] + " - YOU: " + recvInts[4]);
             }
-//            board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
-//            board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});
-//            System.out.println(board.toString());
             counter++;
         }
         socket.close();
@@ -84,25 +94,27 @@ public class TCPEchoClient {
         int x= kb.nextInt();
         System.out.print("Enter Y coordinate: ");
         int y= kb.nextInt();
-        int move[] = new int[3];
+        int move[] = new int[5];
         move[0] = 1; //1 indicating a move from user
         move[1] = x;
         move[2] = y;
+        move[3] = 0;
+        move[4] = 0;
                 
         return move;
     }
     
     public static byte[] convertIntToByteArrays(int[] move){
-        byte[] bytes = new byte[3];
-        for(int i = 0; i<3; i++){
+        byte[] bytes = new byte[5];
+        for(int i = 0; i<5; i++){
             bytes[i] = (byte)move[i];
         }
         return bytes;
     }
     
     public static int[] convertBytesToIntArrays(byte[] bytes){
-        int[] move = new int[3];
-        for(int i = 0; i<3; i++){
+        int[] move = new int[5];
+        for(int i = 0; i<5; i++){
             move[i] = bytes[i] & 0xFF; //converts to integer
         }
         return move;
@@ -141,6 +153,7 @@ public class TCPEchoClient {
         System.out.println("2. No, I quit.");
         Scanner kb = new Scanner(System.in);
         int answer = kb.nextInt();
+        System.out.println("You chose: "+answer);
         if(answer == 1){ 
             return true;
         } else {
@@ -149,12 +162,12 @@ public class TCPEchoClient {
     }
     
     private byte[] requestNewGame(){
-        int[] userMessageInt = new int[]{NEWGAME,0,0};
+        int[] userMessageInt = new int[]{NEWGAME,0,0,0,0};
         return convertIntToByteArrays(userMessageInt);
     }
     
     private byte[] userQuit(){
-        int[] userMessageInt = new int[]{GAMEOVER,0,0};
+        int[] userMessageInt = new int[]{GAMEOVER,0,0,0,0};
         return convertIntToByteArrays(userMessageInt);
     }
 }
