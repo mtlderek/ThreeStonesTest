@@ -6,21 +6,19 @@ import three_stones.views.Board;
 //C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoClient 192.168.56.1 4455
 public class TCPEchoClient {
 
-    int HUMAN = 1;
-        int ROBOT = 2;
-        int ERROR = 3;
-        int WIN = 6; //user win
-        int LOSS = 7; //user loss
-        int DRAW = 8;
-        int QUIT = 5;
-        int NEWGAME = 4;
-        int GAMEOVER = 9;
+    private static final int HUMAN = 1;
+    private static final int ROBOT = 2;
+    private static final int ERROR = 3;
+    private static final int WIN = 6;  //user win
+    private static final int LOSS = 7; //user loss
+    private static final int DRAW = 8;
+    private static final int QUIT = 5;
+    private static final int NEWGAME = 4;
+    private static final int GAMEOVER = 9;
     public static void main(String[] args) throws IOException {
-        
-        
         Board board = new Board();
         System.out.println(board.toString());
-        int counter = 0;
+//        int counter = 0;
         Scanner kb = new Scanner(System.in);
 
         String server = getIpAddress();
@@ -28,18 +26,23 @@ public class TCPEchoClient {
         int servPort = 50000;
         Socket socket = new Socket(server, servPort);
         boolean gameOver = false;
-        boolean firstMove = true;
+        boolean firstMove = true; //is thi necessary now?
         while (gameOver == false) { //this should be changed for a game over boolean
             int[] move;
             byte[] byteBuffer;
-
+            
             move = requestUserMove();    
+            if(move[0] == QUIT){ //user opted to quit
+                socket.close();
+                System.out.println("Connection closed.");
+                System.exit(0);
+            }
+            
             byteBuffer = convertIntToByteArrays(move);
 
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
             out.write(byteBuffer);	// Send the encoded string to the server
-            System.out.println("HERE");
             // Receive the same string back from the server
             int totalBytesRcvd = 0;	// Total bytes received so far
             int bytesRcvd;		// Bytes received in last read
@@ -71,6 +74,9 @@ public class TCPEchoClient {
                     System.out.print(board.toString());
                 } else {
                     System.out.println("User requested to quit");
+                    socket.close();
+                    System.out.println("Connection closed.");
+                    System.exit(0);
                 }
             } else if (recvInts[0] == 3){  //3 is error code
                 System.out.println("Invalid Move");
@@ -82,7 +88,7 @@ public class TCPEchoClient {
                 System.out.println(board.toString());
                 System.out.println ("SCORE\nROBOT: " + recvInts[3] + " - YOU: " + recvInts[4]);
             }
-            counter++;
+//            counter++;
         }
         socket.close();
     }
@@ -90,6 +96,7 @@ public class TCPEchoClient {
     
     public static int[] requestUserMove(){
         Scanner kb = new Scanner(System.in);
+        System.out.print("Enter 9 as a coordinate at anytime to quit");
         System.out.print("Enter X coordinate: ");
         int x= kb.nextInt();
         System.out.print("Enter Y coordinate: ");
@@ -100,8 +107,12 @@ public class TCPEchoClient {
         move[2] = y;
         move[3] = 0;
         move[4] = 0;
-                
-        return move;
+        
+        if (x == 9 || y == 9){ //user quit
+            return userQuit();
+        } else {
+            return move;
+        }
     }
     
     public static byte[] convertIntToByteArrays(int[] move){
@@ -166,8 +177,8 @@ public class TCPEchoClient {
         return convertIntToByteArrays(userMessageInt);
     }
     
-    private byte[] userQuit(){
-        int[] userMessageInt = new int[]{GAMEOVER,0,0,0,0};
-        return convertIntToByteArrays(userMessageInt);
+    private static int[] userQuit(){
+        return new int[]{QUIT,0,0,0,0};
+//        return convertIntToByteArrays(userMessageInt);
     }
 }

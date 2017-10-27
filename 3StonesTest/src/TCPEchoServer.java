@@ -27,6 +27,7 @@ public class TCPEchoServer {
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
 
         for (;;) {
+            game.reset();
             Socket clntSock = servSock.accept();	// Get client connection
 
             System.out.println("Handling client at "
@@ -99,13 +100,10 @@ public class TCPEchoServer {
         if (game.isGameOver()) {
             System.out.print("Game is over");
             int matchResult = determineVictor(game.getScore()[0], game.getScore()[1]);
-            
             game.reset();
-            return matchResult;
-//                      
+            return matchResult;         
         } else {
             return ROBOT;
         }
-        
     }
 }
