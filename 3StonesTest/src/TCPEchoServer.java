@@ -41,31 +41,19 @@ public class TCPEchoServer {
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
                 
                 int move[] = new int[5];
-                if (recvInts[0] == 4) { //user selects new game
-                    game.reset();
-                    move = new int[] {NEWGAME,0,1};
-                } else if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
+                if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                     game.humanMove(new int[]{recvInts[1],recvInts[2]});
                     move = game.robotMove();
-//                    if(game.isGameOver()){
-//                        System.out.print("Game is over");
-//                        int matchResult =  determineVictor(game.getScore()[0], game.getScore()[1]);
-//                        out.write(convertMoveToByteArray(move, matchResult, game),0,recvMsgSize);
-//                        game.reset();
-////                      
-//                    } else {
-//                        out.write(convertMoveToByteArray(move, ROBOT, game),0,recvMsgSize);
-//                    }
                     int sendCode = handleValidMove(game);
                     out.write(convertMoveToByteArray(move, sendCode, game),0,recvMsgSize);
-                    if(sendCode > 6){game.reset();}
+                    if(sendCode > 6){game.reset();} // is this necessary
                 } else {
 //                    send back error code as move
                     move = new int[] {3,0,1,0,0}; //code for invalid move
                     out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
                 }
                 
-                System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
+                System.out.println("received: " + recvInts[0] + " " + recvInts[1] + " " + recvInts[2]);
                 System.out.println("sending: " + move[0] + " " + move[1]);
             }
         }
@@ -80,6 +68,7 @@ public class TCPEchoServer {
         codedArray[4] = game.getScore()[1];
         return convertIntToByteArrays(codedArray);
     }
+    
     public static byte[] convertIntToByteArrays(int[] move) {
         byte[] bytes = new byte[5];
         for (int i = 0; i < 5; i++) {
