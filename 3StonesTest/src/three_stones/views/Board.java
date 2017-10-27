@@ -127,7 +127,9 @@ public class Board{
         
         gameBoard = gameboard;
         lastPlayedStr = "";
-        lastPlayed = new int[2];      
+        lastPlayed = new int[2];    
+        playerScore = 0;
+        serverScore = 0;
         
     }
     

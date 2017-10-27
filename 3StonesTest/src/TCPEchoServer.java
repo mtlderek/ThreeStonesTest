@@ -11,7 +11,7 @@ public class TCPEchoServer {
 
     public static void main(String[] args) throws IOException {
         
-//        sendCodes
+//      sendCodes
         int HUMAN = 1;
         int ROBOT = 2;
         int ERROR = 3;
@@ -24,14 +24,9 @@ public class TCPEchoServer {
         int servPort = 50000;
         // Create a server socket to accept client connection requests
         ServerSocket servSock = new ServerSocket(servPort);
-
-        int messageCount = 0;
         int recvMsgSize;  // Size of received message
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
 
-        // Run forever, accepting and servicing connections
-        int closecounter = 0;
-//         Socket clntSock = servSock.accept();	// Get client connection
         for (;;) {
             Socket clntSock = servSock.accept();	// Get client connection
 
@@ -42,14 +37,10 @@ public class TCPEchoServer {
             InputStream in = clntSock.getInputStream();
             OutputStream out = clntSock.getOutputStream();
 
-            // Receive until client closes connection, indicated by -1 return
-//          int move[] = game.robotMove();
-            
             while ((recvMsgSize = in.read(byteBuffer)) != -1) { //This represents a game
-//                out.write(byteBuffer, 0, recvMsgSize);
 
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
-                //before this next line we need to validate.
+                
                 int move[] = new int[5];
                 if (recvInts[0] == 4) { //user selects new game
                     game.reset();
@@ -57,7 +48,6 @@ public class TCPEchoServer {
                 } else if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                     game.humanMove(new int[]{recvInts[1],recvInts[2]});
                     move = game.robotMove();
-                    //check here if game is over
                     boolean gameOver = game.isGameOver();
                     if(gameOver){
                         System.out.print("Game is over");
@@ -84,15 +74,9 @@ public class TCPEchoServer {
                     out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
                 }
               
-//                game.humanMove(new int[]{recvInts[1],recvInts[2]});
-//                move[] = game.robotMove();
                 
                 System.out.println("received: " + recvInts[1] + " " + recvInts[2]);
                 System.out.println("sending: " + move[0] + " " + move[1]);
-            }
-            closecounter ++;
-            if(closecounter == 30){
-                clntSock.close();
             }
         }
     }
