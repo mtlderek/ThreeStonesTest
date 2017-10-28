@@ -6,8 +6,9 @@ import three_stones.views.Board;
 //C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoClient 192.168.56.1 4455
 public class TCPEchoClient {
 
-    private static final int HUMAN = 1;
-    private static final int ROBOT = 2;
+    //types of messages
+    private static final int HUMAN = 1; // represents the user, or users move
+    private static final int ROBOT = 2; // represents the server, or server's move
     private static final int ERROR = 3;
     private static final int WIN = 6;  //user win
     private static final int LOSS = 7; //user loss
@@ -15,18 +16,23 @@ public class TCPEchoClient {
     private static final int QUIT = 5;
     private static final int NEWGAME = 4;
     private static final int GAMEOVER = 9;
+    
+    //defines what each index int move[] or recvInts[] represent
+    private static final int MESSAGE_TYPE = 0;
+    private static final int X_COORDINATE = 1;
+    private static final int Y_COORDINATE = 2;
+    private static final int ROBOT_SCORE = 3;
+    private static final int HUMAN_SCORE = 4;
+    
     public static void main(String[] args) throws IOException {
         Board board = new Board();
         System.out.println(board.toString());
-//        int counter = 0;
         Scanner kb = new Scanner(System.in);
-
         String server = getIpAddress();
-
         int servPort = 50000;
         Socket socket = new Socket(server, servPort);
         boolean gameOver = false;
-        boolean firstMove = true; //is thi necessary now?
+        
         while (gameOver == false) { //this should be changed for a game over boolean
             int[] move;
             byte[] byteBuffer;
@@ -43,6 +49,7 @@ public class TCPEchoClient {
             InputStream in = socket.getInputStream();
             OutputStream out = socket.getOutputStream();
             out.write(byteBuffer);	// Send the encoded string to the server
+            
             // Receive the same string back from the server
             int totalBytesRcvd = 0;	// Total bytes received so far
             int bytesRcvd;		// Bytes received in last read
@@ -55,40 +62,31 @@ public class TCPEchoClient {
             }
 
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
-            if (recvInts[0] >= 6){ //GAME OVER
-                board.updateBoard(2, new int[]{recvInts[1],recvInts[2]}); // updates ROBOTS last move
-                System.out.println("Game is Over");
-                if(recvInts[0] == 6){
-                    System.out.println ("YOU WIN!");
-                } else if (recvInts[0] == 7){
-                    System.out.println ("YOU LOSE!");
-                } else {
-                    System.out.println ("It's a draw!");
-                }
-                if(userPlayAgain()){
+            if (recvInts[MESSAGE_TYPE] >= 6){ //Game over
+                board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]}); // updates ROBOT's last move
+                displayResult(recvInts[MESSAGE_TYPE]); //WIN, LOSS< or DRAW
+                if(userPlayAgain()){ // user wants to play again
                     System.out.println(board.toString());
-                    System.out.println ("SCORE\nROBOT: " + recvInts[3] + " - YOU: " + recvInts[4]);
-                    
+                    System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] 
+                            + " - YOU: " + recvInts[HUMAN_SCORE]);
                     System.out.println("User requested to play again");
                     board.reset();
                     System.out.print(board.toString());
-                } else {
+                } else { //user wants to quit
                     System.out.println("User requested to quit");
                     socket.close();
                     System.out.println("Connection closed.");
                     System.exit(0);
                 }
-            } else if (recvInts[0] == 3){  //3 is error code
+            } else if (recvInts[MESSAGE_TYPE] == ERROR){  
                 System.out.println("Invalid Move");
-            } else if (recvInts[0] == 6){
-                System.out.println("New Game has begun");
-            } else {
-                board.updateBoard(1, new int[]{move[1],move[2]}); //user's , should technical be done AFTERValidation, will need to fix this
-                board.updateBoard(2, new int[]{recvInts[1],recvInts[2]});  
+            } else { //user's move is valid
+                board.updateBoard(HUMAN, new int[]{move[X_COORDINATE],move[Y_COORDINATE]}); 
+                board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[X_COORDINATE]});  
                 System.out.println(board.toString());
-                System.out.println ("SCORE\nROBOT: " + recvInts[3] + " - YOU: " + recvInts[4]);
+                System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] + 
+                        " - YOU: " + recvInts[HUMAN_SCORE]);
             }
-//            counter++;
         }
         socket.close();
     }
@@ -96,7 +94,7 @@ public class TCPEchoClient {
     
     public static int[] requestUserMove(){
         Scanner kb = new Scanner(System.in);
-        System.out.print("Enter 9 as a coordinate at anytime to quit");
+        System.out.println("Enter 9 as a coordinate at anytime to quit");
         System.out.print("Enter X coordinate: ");
         int x= kb.nextInt();
         System.out.print("Enter Y coordinate: ");
@@ -159,7 +157,7 @@ public class TCPEchoClient {
     }
     
     private static boolean userPlayAgain(){
-        System.out.println("Game is Over, would you like to play again");
+        System.out.println("Would you like to play again");
         System.out.println("1. Yes");
         System.out.println("2. No, I quit.");
         Scanner kb = new Scanner(System.in);
@@ -179,6 +177,23 @@ public class TCPEchoClient {
     
     private static int[] userQuit(){
         return new int[]{QUIT,0,0,0,0};
-//        return convertIntToByteArrays(userMessageInt);
+    }
+    
+    private static void displayResult(int msgCode){
+        System.out.println("Game is Over");
+        switch (msgCode) {
+            case WIN :
+                System.out.println("YOU WIN!");
+                break;
+            case LOSS:
+                System.out.println("YOU LOSE!");
+                break;
+            case DRAW:
+                System.out.println("It's a draw!");
+                break;
+            default:
+                System.out.println("An error has occured could not feth result");
+                break;
+        }
     }
 }
