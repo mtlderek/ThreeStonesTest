@@ -92,4 +92,68 @@ public class Game {
         return new int[]{board.getServerScore(), board.getPlayerScore()};
     }
     
+    public int[] getBestMove(){
+//        store current player turn lastplayed and player
+//change current player turn(last played) and player
+//use Board methods to get points
+//retore lastplayed and player vars
+        int currentPlayerHolder = board.getPlayer();
+        int currentLastPlayedHolder[] = board.getLastPlayed();
+
+        int bestPointMove[] = getMoveWithMostPoints(ROBOT);
+        int bestBlockMove[] = getMoveWithMostPoints(HUMAN);
+        int bestPairingMove[] = getBestPairingMove(); // if null go anywhere
+        //        if both points and blockages return null, then search to make a pair
+        
+        board.setPlayer(currentPlayerHolder);
+        board.setLastPlayed(currentLastPlayedHolder);
+
+        return null;
+    } 
+    
+    public int[] getMoveWithMostPoints(int player){
+        //alter board so we can get the variosu scores for all hypothecial moves
+        int highestPointValue = 0;
+        board.setPlayer(player);
+        
+        
+        List<int[]> possibleMoves = getAvailableMoves();
+        int pointsToBeGained[] = new int[possibleMoves.size()];
+        int counter = 0;
+        for (int[] move : possibleMoves){
+            board.setLastPlayed(move);
+            pointsToBeGained[counter] = board.checkScore(move[0], move[1]);
+            counter++;
+        }
+        
+        //get highest point value
+        for (int i= 0 ; i < pointsToBeGained.length; i++) {
+            if(pointsToBeGained[i] > highestPointValue) {
+                highestPointValue = pointsToBeGained[i];
+            }
+        }
+        
+        //Make array of highest values
+        List<int[]> highestValuedMoves = new ArrayList<int[]>();
+        for (int j = 0; j < pointsToBeGained.length; j++){
+            if (pointsToBeGained[j] == highestPointValue){
+                highestValuedMoves.add(possibleMoves.get(j));
+            }
+        }
+        
+        if(highestPointValue == 0){
+            return null;
+        }
+        
+        //Now choose randomly among them
+        int chosenMoveIndex = random.nextInt(highestValuedMoves.size());
+        
+        return highestValuedMoves.get(chosenMoveIndex);
+    }
+    
+    public int[] getBestPairingMove(){
+        List<int[]> possibleMoves = getAvailableMoves();
+        return null;
+    }
+    
 }

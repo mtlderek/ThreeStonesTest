@@ -27,7 +27,7 @@ public class TCPEchoServer {
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
 
         for (;;) {
-//            game.reset(); 
+            game.reset(); 
             Socket clntSock = servSock.accept();	// Get client connection
 
             System.out.println("Handling client at "

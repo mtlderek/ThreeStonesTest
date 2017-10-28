@@ -15,7 +15,7 @@ public class TCPEchoClient {
     private static final int DRAW = 8;
     private static final int QUIT = 5;
     private static final int NEWGAME = 4;
-    private static final int GAMEOVER = 9;
+//    private static final int GAMEOVER = 9;
     
     //defines what each index int move[] or recvInts[] represent
     private static final int MESSAGE_TYPE = 0;
@@ -82,7 +82,7 @@ public class TCPEchoClient {
                 System.out.println("Invalid Move");
             } else { //user's move is valid
                 board.updateBoard(HUMAN, new int[]{move[X_COORDINATE],move[Y_COORDINATE]}); 
-                board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[X_COORDINATE]});  
+                board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]});  
                 System.out.println(board.toString());
                 System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] + 
                         " - YOU: " + recvInts[HUMAN_SCORE]);

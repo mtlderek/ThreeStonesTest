@@ -34,8 +34,8 @@ public class Main {
 //        for(int[] move : moves){
 //            System.out.print(Arrays.toString(move));
 //        }
-        Game game = new Game();
-        game.humanMove(new int[]{7,4});
+//        Game game = new Game();
+//        game.humanMove(new int[]{7,4});
 //        game.printState();
 //        game.robotMove();
 //        game.printState();
@@ -49,24 +49,26 @@ public class Main {
 //        game.printState();
 //        game.robotMove();
 //        game.printState();
-        byte[] b = new byte[4];
-        int v = 233;
-        b[0] = (byte)2;
-        
-        b[1] = (byte)200;
-        b[2] = (byte)234;
-        b[3] = (byte)43;
-        
-        int move[] = new int[4];
-        for(int j = 0; j < 4; j++){
-            move[j] = b[j] & 0xFF;
-        }
-        
+//        byte[] b = new byte[4];
+//        int v = 233;
+//        b[0] = (byte)2;
+//        
+//        b[1] = (byte)200;
+//        b[2] = (byte)234;
+//        b[3] = (byte)43;
+//        
+//        int move[] = new int[4];
+//        for(int j = 0; j < 4; j++){
+//            move[j] = b[j] & 0xFF;
+//        }
+//        
 //        System.out.println("" + b);
-        for(int i  = 0 ; i < 4; i++){
-            System.out.println("byte value: " + b[i]);
-            System.out.println("int value: " + move[i]);
-        }
+//        for(int i  = 0 ; i < 4; i++){
+//            System.out.println("byte value: " + b[i]);
+//            System.out.println("int value: " + move[i]);
+//        }
+        Board board = new Board();
+        System.out.println("value = "+board.getValueAt(4,6));
         
         
         
