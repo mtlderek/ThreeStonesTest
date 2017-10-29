@@ -100,7 +100,6 @@ public class TCPEchoServer {
         if (game.isGameOver()) {
             System.out.print("Game is over");
             int matchResult = determineVictor(game.getScore()[0], game.getScore()[1]);
-//            game.reset();
             return matchResult;         
         } else {
             return ROBOT;
