@@ -64,11 +64,12 @@ public class TCPEchoClient {
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
             if (recvInts[MESSAGE_TYPE] >= 6){ //Game over
                 board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]}); // updates ROBOT's last move
+                System.out.println(board.toString());
+                System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] 
+                        + " - YOU: " + recvInts[HUMAN_SCORE]);
                 displayResult(recvInts[MESSAGE_TYPE]); //WIN, LOSS< or DRAW
+                
                 if(userPlayAgain()){ // user wants to play again
-                    System.out.println(board.toString());
-                    System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] 
-                            + " - YOU: " + recvInts[HUMAN_SCORE]);
                     System.out.println("User requested to play again");
                     board.reset();
                     System.out.print(board.toString());

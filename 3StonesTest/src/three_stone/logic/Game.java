@@ -26,11 +26,16 @@ public class Game {
     }
     
     public int[] robotMove(){
-        List<int[]> moves = new ArrayList<int[]>();
-        moves = getAvailableMoves();
-        int selection = random.nextInt(moves.size());
-        board.updateBoard(ROBOT, moves.get(selection));
-        return moves.get(selection);
+//        List<int[]> moves = new ArrayList<int[]>();
+//        moves = getAvailableMoves();
+//        int selection = random.nextInt(moves.size());
+//        board.updateBoard(ROBOT, moves.get(selection));
+////        return moves.get(selection);
+        int move[] = getBestMove();
+        board.updateBoard(ROBOT, move);
+        board.toString();
+        System.out.print("does this print?");
+        return move;
     }
     
     public void humanMove(int[] position){
@@ -65,7 +70,7 @@ public class Game {
     public boolean isValidMove(int[] move){
         List<int[]> availableMoves = getAvailableMoves();
         for(int[] i : availableMoves){
-            System.out.println("" + i[0] + "," + i[1]);
+//            System.out.println("" + i[0] + "," + i[1]);
             if( i[0] == move[0] && i[1] == move[1] ){
                 return true;
             }
@@ -93,25 +98,44 @@ public class Game {
     }
     
     public int[] getBestMove(){
-//        store current player turn lastplayed and player
-//change current player turn(last played) and player
-//use Board methods to get points
-//retore lastplayed and player vars
-        int currentPlayerHolder = board.getPlayer();
-        int currentLastPlayedHolder[] = board.getLastPlayed();
+
+        
 
         int bestPointMove[] = getMoveWithMostPoints(ROBOT);
         int bestBlockMove[] = getMoveWithMostPoints(HUMAN);
-        int bestPairingMove[] = getBestPairingMove(); // if null go anywhere
-        //        if both points and blockages return null, then search to make a pair
-        
-        board.setPlayer(currentPlayerHolder);
-        board.setLastPlayed(currentLastPlayedHolder);
+        int bestPairingMove[] = getBestPairingMove(); 
+        int chosenMove[];
 
-        return null;
+        
+        if(bestBlockMove == null){
+            if(bestPointMove == null){
+                if(bestPairingMove == null){
+                    List<int[]> moves = getAvailableMoves();
+                    int moveIndex = random.nextInt(moves.size());
+                    chosenMove = moves.get(moveIndex);
+                    System.out.println("Using Random");
+                } else {
+                    System.out.println("Using Pairing");
+                    chosenMove = bestPairingMove;
+                }
+            } else {
+                chosenMove = bestPointMove;
+                System.out.println("Using Best point move");
+            }
+        } else {
+            chosenMove = bestBlockMove;
+            System.out.println("Using Blocking");
+        }
+        
+
+        
+        return chosenMove;
+//        return bestPointMove;
     } 
     
     public int[] getMoveWithMostPoints(int player){
+        int currentPlayerHolder = board.getPlayer();
+        int currentLastPlayedHolder[] = board.getLastPlayed();
         //alter board so we can get the variosu scores for all hypothecial moves
         int highestPointValue = 0;
         board.setPlayer(player);
@@ -121,8 +145,9 @@ public class Game {
         int pointsToBeGained[] = new int[possibleMoves.size()];
         int counter = 0;
         for (int[] move : possibleMoves){
-            board.setLastPlayed(move);
-            pointsToBeGained[counter] = board.checkScore(move[0], move[1]);
+//            board.setLastPlayed(new int[] {move[1], move[0]});
+            board.setLastPlayed(new int[] {move[1], move[0]});
+            pointsToBeGained[counter] = board.checkScore(move[1], move[0]);
             counter++;
         }
         
@@ -140,8 +165,9 @@ public class Game {
                 highestValuedMoves.add(possibleMoves.get(j));
             }
         }
-        
-        if(highestPointValue == 0){
+        board.setPlayer(currentPlayerHolder);
+        board.setLastPlayed(currentLastPlayedHolder);
+        if(highestPointValue == 0){ // none of the moves earned points
             return null;
         }
         
@@ -152,8 +178,38 @@ public class Game {
     }
     
     public int[] getBestPairingMove(){
+        
+        
         List<int[]> possibleMoves = getAvailableMoves();
-        return null;
+        List<int[]> movesWithNeighboringROBOT = new ArrayList<>();
+        
+        for(int move[] : possibleMoves){
+            if (hasNeighbouringROBOT(move)){
+                movesWithNeighboringROBOT.add(move);
+            }
+        }
+        
+        
+        if(movesWithNeighboringROBOT.isEmpty()){
+            return null;
+        } else {
+            int chosenMoveIndex = random.nextInt(movesWithNeighboringROBOT.size());
+            return movesWithNeighboringROBOT.get(chosenMoveIndex);
+        }
+        
+    }
+    
+    public boolean hasNeighbouringROBOT(int[] move){
+//        System.out.println("TEST: Game.hasNeighbouringROBOT: " + move[0] + " " + move[1]);
+        if (board.getValueAt(move[0]-1, move[1]-1) == 2){ return true;} //top left
+        if (board.getValueAt(move[0], move[1]-1) == 2){ return true;}   // top center
+        if (board.getValueAt(move[0]+1, move[1]-1) == 2){ return true;} // top right
+        if (board.getValueAt(move[0]-1, move[1]) == 2){ return true;}  // middle left
+        if (board.getValueAt(move[0]+1, move[1]) == 2){ return true;}  // midle right
+        if (board.getValueAt(move[0]-1, move[1]+1)  == 2){ return true;}// bottom left
+        if (board.getValueAt(move[0], move[1]+1)  == 2){ return true;}  // bottom center
+        if (board.getValueAt(move[0]+1, move[1]+1)  == 2){ return true;} // bottom right
+        return false;
     }
     
 }

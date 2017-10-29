@@ -54,8 +54,8 @@ public class TCPEchoServer {
                     out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
                 }
                 
-                System.out.println("received: " + recvInts[0] + " " + recvInts[1] + " " + recvInts[2]);
-                System.out.println("sending: " + move[0] + " " + move[1]);
+                //System.out.println("received: " + recvInts[0] + " " + recvInts[1] + " " + recvInts[2]);
+                //System.out.println("sending: " + move[0] + " " + move[1]);
             }
         }
     }
@@ -89,7 +89,7 @@ public class TCPEchoServer {
     public static int determineVictor(int robotScore, int humanScore){
         if (robotScore > humanScore) {
             return LOSS;
-        } else if (robotScore > humanScore) {
+        } else if (robotScore < humanScore) {
             return WIN;
         } else {
             return DRAW;
@@ -100,7 +100,7 @@ public class TCPEchoServer {
         if (game.isGameOver()) {
             System.out.print("Game is over");
             int matchResult = determineVictor(game.getScore()[0], game.getScore()[1]);
-            game.reset();
+//            game.reset();
             return matchResult;         
         } else {
             return ROBOT;

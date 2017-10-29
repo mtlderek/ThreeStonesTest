@@ -68,7 +68,7 @@ public class Main {
 //            System.out.println("int value: " + move[i]);
 //        }
         Board board = new Board();
-        System.out.println("value = "+board.getValueAt(4,6));
+        System.out.println("value = "+board.getValueAt(3,3));
         
         
         

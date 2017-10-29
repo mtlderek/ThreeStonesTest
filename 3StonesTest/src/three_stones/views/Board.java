@@ -177,7 +177,7 @@ public class Board{
         }
 //        printScore();
     }
-        public int checkScore(int x, int y){
+        public int checkScore(int x, int y){ //reverse x and y
         int totalMoveScore = 0;
         totalMoveScore += checkDiagonalLR(x,y);
         totalMoveScore += checkDiagonalRL(x,y);
@@ -194,7 +194,7 @@ public class Board{
         if(gameBoard[x-1][y-1]==player&&gameBoard[x+1][y+1]==player){
             currentScore++;
         }
-        if(gameBoard[x+1][y+1]==player&&gameBoard[y+2][x+2]==player){
+        if(gameBoard[x+1][y+1]==player&&gameBoard[x+2][y+2]==player){
             currentScore++;
         }
         return currentScore;
@@ -264,7 +264,8 @@ public class Board{
     }
     
     public int getValueAt(int x, int y) {
-        int value = gameBoard[y-1][x-1]; //may need to swap x,y
+//        System.out.println("TEST: Board.getValueAt(): " + x + " " + y);
+        int value = gameBoard[y][x]; //may need to swap x,y
         return value;
     }
     
