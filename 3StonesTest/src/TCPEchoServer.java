@@ -3,8 +3,13 @@ import java.net.*;  // for Socket, ServerSocket, and InetAddress
 import java.io.*;   // for IOException and Input/OutputStream
 import three_stone.logic.Game;
 
-//C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoServer 4455
-//C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes
+/**
+ * Responsible for listen on port 50000, connecting and maintaining 
+ * a connection with 1 or more clients. Also responsible for sending and 
+ * receiving messages to/from the client(s).
+ * 
+ * @author derek
+ */
 public class TCPEchoServer {
 
     private static final int BUFSIZE = 32;	// Size of receive buffer
@@ -17,6 +22,13 @@ public class TCPEchoServer {
     private static final int QUIT = 5;
     private static final int NEWGAME = 4;
 
+    /**
+     * Responsible for creating and managing a game of Three Stones. As well
+     * as communicating with clients.
+     * 
+     * @param args
+     * @throws IOException 
+     */
     public static void main(String[] args) throws IOException {
 
         Game game = new Game();
@@ -60,6 +72,15 @@ public class TCPEchoServer {
         }
     }
 
+    /**
+     * Converts int array into a byte array that will be sent to the client.
+     * 
+     * @param move 
+     * @param sendCode is the kind of message 1 or 2 is a move, 3 is error, 6
+     *      is a win for client, etc.
+     * @param game current instance of the game, used to retrieve scores.
+     * @return Message intended for client.
+     */
     public static byte[] convertMoveToByteArray(int[] move, int sendCode, Game game){
         int codedArray[] = new int[5];
         codedArray[0] = sendCode;
@@ -70,6 +91,14 @@ public class TCPEchoServer {
         return convertIntToByteArrays(codedArray);
     }
     
+    /**
+     * Convert an integer array into a byte array which can be sent to the 
+     * client.
+     * 
+     * @param move is the server's move on the game board, can also be used to
+     *      indicate or server intentions.
+     * @return byte array that the server will receive.
+     */
     public static byte[] convertIntToByteArrays(int[] move) {
         byte[] bytes = new byte[5];
         for (int i = 0; i < 5; i++) {
@@ -78,6 +107,12 @@ public class TCPEchoServer {
         return bytes;
     }
 
+     /**
+     * Convert a byte array into an int array
+     * 
+     * @param bytes an array that is a coded message from the client.
+     * @return an integer array.
+     */
     public static int[] convertBytesToIntArrays(byte[] bytes) {
         int[] move = new int[5];
         for (int i = 0; i < 5; i++) {
@@ -86,6 +121,13 @@ public class TCPEchoServer {
         return move;
     }
     
+    /**
+     * Using the provided score, this method determine the final result of the 
+     * game. 
+     * @param robotScore
+     * @param humanScore
+     * @return integer representing the result
+     */
     public static int determineVictor(int robotScore, int humanScore){
         if (robotScore > humanScore) {
             return LOSS;
@@ -95,7 +137,13 @@ public class TCPEchoServer {
             return DRAW;
         }
     }
-    
+    /**
+     * Handles user's move given that it is a valid move.
+     * 
+     * @param game instance of current game
+     * @return an int that is the message code used to indicate how the client
+     *      should handle the message.
+     */
     public static int handleValidMove(Game game){
         if (game.isGameOver()) {
             System.out.print("Game is over");

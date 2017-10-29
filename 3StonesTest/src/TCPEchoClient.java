@@ -10,12 +10,12 @@ public class TCPEchoClient {
     private static final int HUMAN = 1; // represents the user, or users move
     private static final int ROBOT = 2; // represents the server, or server's move
     private static final int ERROR = 3;
+    private static final int NEWGAME = 4;
+    private static final int QUIT = 5;
     private static final int WIN = 6;  //user win
     private static final int LOSS = 7; //user loss
     private static final int DRAW = 8;
-    private static final int QUIT = 5;
-    private static final int NEWGAME = 4;
-//    private static final int GAMEOVER = 9;
+    
     
     //defines what each index int move[] or recvInts[] represent
     private static final int MESSAGE_TYPE = 0;
@@ -24,6 +24,12 @@ public class TCPEchoClient {
     private static final int ROBOT_SCORE = 3;
     private static final int HUMAN_SCORE = 4;
     
+    /**
+     * Responsible for establish and maintaining a connection to the server.
+     * 
+     * @param args Are not used.
+     * @throws IOException thrown when connection fails or drops unexpectedly.
+     */
     public static void main(String[] args) throws IOException {
         Board board = new Board();
         System.out.println(board.toString());
@@ -81,7 +87,7 @@ public class TCPEchoClient {
                 }
             } else if (recvInts[MESSAGE_TYPE] == ERROR){  
                 System.out.println("Invalid Move");
-            } else { //user's move is valid
+            } else { //user's move is valid, process user and Server's move
                 board.updateBoard(HUMAN, new int[]{move[X_COORDINATE],move[Y_COORDINATE]}); 
                 board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]});  
                 System.out.println(board.toString());
@@ -92,7 +98,13 @@ public class TCPEchoClient {
         socket.close();
     }
     
-    
+    /**
+     * prompts the user to enter to values to indicate their move on the game 
+     * board. User may also enter 9 as either coordinate and that indicates 
+     * that they chose to quit the game.
+     * 
+     * @return integer array contain user intention.
+     */
     public static int[] requestUserMove(){
         Scanner kb = new Scanner(System.in);
         System.out.println("Enter 9 as a coordinate at anytime to quit");
@@ -114,6 +126,14 @@ public class TCPEchoClient {
         }
     }
     
+    /**
+     * Convert an integer array into a byte array which can be sent to the 
+     * server.
+     * 
+     * @param move is the users move on the game board, can also be used to
+     *      indicate or user intentions.
+     * @return byte array that the server will receive.
+     */
     public static byte[] convertIntToByteArrays(int[] move){
         byte[] bytes = new byte[5];
         for(int i = 0; i<5; i++){
@@ -122,6 +142,12 @@ public class TCPEchoClient {
         return bytes;
     }
     
+    /**
+     * Convert a byte array into an int array
+     * 
+     * @param bytes an array that is a coded message from the server.
+     * @return an integer array.
+     */
     public static int[] convertBytesToIntArrays(byte[] bytes){
         int[] move = new int[5];
         for(int i = 0; i<5; i++){
@@ -130,6 +156,11 @@ public class TCPEchoClient {
         return move;
     }
     
+    /**
+     * Prompts the user to either user local IP or enter one of their choosing.
+     * 
+     * @return the IP address that will be used
+     */
     public static String getIpAddress(){
         String localIp = "";
         try{
@@ -152,11 +183,22 @@ public class TCPEchoClient {
         }
     }
     
+    /**
+     * Gets ip from user's keyboard entry.
+     * 
+     * @return an ip address as a string .
+     */
     public static String getUserEnteredIp(){
         Scanner kb = new Scanner(System.in);
         return kb.nextLine();
     }
     
+    /**
+     * Prompts the user to play again, user enter a 1 or 2 indicating their 
+     * choice.
+     * 
+     * @return boolean indicating user's desire to play again.
+     */
     private static boolean userPlayAgain(){
         System.out.println("Would you like to play again");
         System.out.println("1. Yes");
@@ -171,15 +213,31 @@ public class TCPEchoClient {
         }
     }
     
+    /**
+     * Creates an integer array that can be formatted to indicate user's intent 
+     * to start a new game.
+     * 
+     * @return a message in integer-array format to indicate user is restarting.
+     */
     private byte[] requestNewGame(){
         int[] userMessageInt = new int[]{NEWGAME,0,0,0,0};
         return convertIntToByteArrays(userMessageInt);
     }
     
+    /**
+     * Creates an integer array that can be formatted to indicate user's intent 
+     * to quit.
+     * 
+     * @return a message in integer-array format to indicate user is quitting
+     */
     private static int[] userQuit(){
         return new int[]{QUIT,0,0,0,0};
     }
     
+    /** Display the result of the game to the user.
+     * 
+     * @param msgCode contains the result of the game.
+     */
     private static void displayResult(int msgCode){
         System.out.println("Game is Over");
         switch (msgCode) {
