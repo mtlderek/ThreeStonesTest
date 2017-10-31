@@ -50,7 +50,6 @@ public class TCPEchoServer {
             OutputStream out = clntSock.getOutputStream();
 
             while ((recvMsgSize = in.read(byteBuffer)) != -1) { //This represents a game
-
                 int recvInts[] = convertBytesToIntArrays(byteBuffer);
                 
                 int move[] = new int[5];
@@ -132,7 +131,7 @@ public class TCPEchoServer {
         if (robotScore > humanScore) {
             return LOSS;
         } else if (robotScore < humanScore) {
-            return WIN;
+            return WIN; 
         } else {
             return DRAW;
         }

@@ -214,7 +214,7 @@ public class Game {
     }
     
     /**
-     * Method is used if the is no way the server can gain point or block client
+     * Method is used if there is no way the server can gain point or block client
      * from gaining point. It searches among available moves for a spot where it
      * can create a line of 2-in-a-row, thus setting up future opportunities for
      * itself.

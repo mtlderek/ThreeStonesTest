@@ -15,9 +15,8 @@ import java.util.List;
  * class also keeps track of the player score, the server score and the last slot
  * where a move was made in.
  *
- * @author Derek McLean
  * @author Sebastian Ramirez
- * @author Johnny Lin
+ * @author Derek McLean
  */
 
 public class Board{
@@ -26,7 +25,7 @@ public class Board{
     private final int stoneCount;
     private int[][] gameBoard;
     private String lastPlayedStr = "";
-    private int playerScore;
+    private int playerScore;    
     private int serverScore;
     private int player;
 /**
