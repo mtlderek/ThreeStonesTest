@@ -4,7 +4,7 @@ import java.io.*;   // for IOException and Input/OutputStream
 import java.util.Scanner;
 import three_stones.views.Board;
 //C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoClient 192.168.56.1 4455
-public class TCPEchoClient {
+public class ThreeStonesClient {
 
     //types of messages
     private static final int HUMAN = 1; // represents the user, or users move
@@ -70,6 +70,7 @@ public class TCPEchoClient {
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
             if (recvInts[MESSAGE_TYPE] >= 6){ //Game over
                 board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]}); // updates ROBOT's last move
+                board.updateBoard(HUMAN, new int[]{move[X_COORDINATE],move[Y_COORDINATE]}); //new line
                 System.out.println(board.toString());
                 System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] 
                         + " - YOU: " + recvInts[HUMAN_SCORE]);

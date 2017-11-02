@@ -16,10 +16,12 @@ public class Game {
     private final int ROBOT = 2;
     private Board board;
     private Random random;
+    private int turn;
     
     public Game(){
         board = new Board();
         random = new Random();
+        this.turn = 0;
     }
     
     /**
@@ -99,7 +101,11 @@ public class Game {
      */
     public boolean isGameOver(){
         List<int[]> availableMoves = getAvailableMoves();
-        return availableMoves.isEmpty();
+        boolean over = availableMoves.isEmpty();
+        if (turn >= 30) {
+            over = true;
+        }
+        return over;
     }
     
     /**
@@ -107,6 +113,7 @@ public class Game {
      */
     public void reset() {
         board.reset();
+        turn = 0;
     }
     
     /**
@@ -261,5 +268,15 @@ public class Game {
         if (board.getValueAt(move[0]+1, move[1]+1)  == 2){ return true;} // bottom right
         return false;
     }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+    
+    
     
 }
