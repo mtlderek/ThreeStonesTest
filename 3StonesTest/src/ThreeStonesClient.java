@@ -70,6 +70,7 @@ public class ThreeStonesClient {
             int recvInts[] = convertBytesToIntArrays(byteBuffer);
             if (recvInts[MESSAGE_TYPE] >= 6){ //Game over
                 board.updateBoard(ROBOT, new int[]{recvInts[X_COORDINATE],recvInts[Y_COORDINATE]}); // updates ROBOT's last move
+                board.updateBoard(HUMAN, new int[]{move[X_COORDINATE],move[Y_COORDINATE]}); //new line
                 System.out.println(board.toString());
                 System.out.println ("SCORE\nROBOT: " + recvInts[ROBOT_SCORE] 
                         + " - YOU: " + recvInts[HUMAN_SCORE]);
