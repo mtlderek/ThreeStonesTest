@@ -115,7 +115,24 @@ public class Board{
                 if(gameBoard[i][j] == 9) {
                     str += "  "; 
                 } else {
-                str += " " + gameBoard[i][j]; 
+                    if(gameBoard[i][j] == 1){
+//                        if (gameBoard[i][j] == lastPlayed){
+//                            
+//                        }
+                        String symbol = "b";
+                        str += " " + "b"; 
+                    } else if(gameBoard[i][j] == 2) {
+                        if (j == lastPlayed[0] && i == lastPlayed[1]){
+                            String symbol = "W";
+                            str += " " + "W";  
+                        } else {
+                            String symbol = "w";
+                            str += " " + "w";  
+                        }
+                    } else {
+                        str += " " + gameBoard[i][j]; 
+                    }
+//                    str += " " + gameBoard[i][j]; 
                 }
             }   
         }
