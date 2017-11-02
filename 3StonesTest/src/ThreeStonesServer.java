@@ -59,6 +59,7 @@ public class ThreeStonesServer {
                     if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
                         game.humanMove(new int[]{recvInts[1],recvInts[2]});
                         move = game.robotMove();
+                        game.setTurn(game.getTurn()+2);
                         int sendCode = handleValidMove(game);
                         out.write(convertMoveToByteArray(move, sendCode, game),0,recvMsgSize);
                         if(sendCode > 6){game.reset();} // is this necessary
