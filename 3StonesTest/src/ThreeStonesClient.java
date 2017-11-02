@@ -4,7 +4,7 @@ import java.io.*;   // for IOException and Input/OutputStream
 import java.util.Scanner;
 import three_stones.views.Board;
 //C:\Users\derek\Documents\3StonesTest\ThreeStonesTest\3StonesTest\build\classes>java TCPEchoClient 192.168.56.1 4455
-public class TCPEchoClient {
+public class ThreeStonesClient {
 
     //types of messages
     private static final int HUMAN = 1; // represents the user, or users move

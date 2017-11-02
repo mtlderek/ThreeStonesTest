@@ -10,7 +10,7 @@ import three_stone.logic.Game;
  * 
  * @author derek
  */
-public class TCPEchoServer {
+public class ThreeStonesServer {
 
     private static final int BUFSIZE = 32;	// Size of receive buffer
     private static final int HUMAN = 1;
@@ -30,45 +30,53 @@ public class TCPEchoServer {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-
         Game game = new Game();
         int servPort = 50000;
         // Create a server socket to accept client connection requests
         ServerSocket servSock = new ServerSocket(servPort);
         int recvMsgSize;  // Size of received message
         byte[] byteBuffer = new byte[BUFSIZE];	// Receive buffer
-
+        
+        System.out.println("Server initialized. IP: " + InetAddress.getLocalHost().getHostAddress() + ", PORT: " + servPort);
+        
+        
         for (;;) {
-            game.reset(); 
-            Socket clntSock = servSock.accept();	// Get client connection
+            try {
+                game.reset(); 
+                Socket clntSock = servSock.accept();	// Get client connection
 
-            System.out.println("Handling client at "
-                    + clntSock.getInetAddress().getHostAddress() + " on port "
-                    + clntSock.getPort());
+                System.out.println("Handling client at "
+                        + clntSock.getInetAddress().getHostAddress() + " on port "
+                        + clntSock.getPort());
 
-            InputStream in = clntSock.getInputStream();
-            OutputStream out = clntSock.getOutputStream();
+                InputStream in = clntSock.getInputStream();
+                OutputStream out = clntSock.getOutputStream();
 
-            while ((recvMsgSize = in.read(byteBuffer)) != -1) { //This represents a game
-                int recvInts[] = convertBytesToIntArrays(byteBuffer);
-                
-                int move[] = new int[5];
-                if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
-                    game.humanMove(new int[]{recvInts[1],recvInts[2]});
-                    move = game.robotMove();
-                    int sendCode = handleValidMove(game);
-                    out.write(convertMoveToByteArray(move, sendCode, game),0,recvMsgSize);
-                    if(sendCode > 6){game.reset();} // is this necessary
-                } else {
-//                    send back error code as move
-                    move = new int[] {3,0,1,0,0}; //code for invalid move
-                    out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
+                while ((recvMsgSize = in.read(byteBuffer)) != -1) { //This represents a game
+                    int recvInts[] = convertBytesToIntArrays(byteBuffer);
+
+                    int move[] = new int[5];
+                    if(game.isValidMove(new int[]{recvInts[1],recvInts[2]})){ //validates user move
+                        game.humanMove(new int[]{recvInts[1],recvInts[2]});
+                        move = game.robotMove();
+                        int sendCode = handleValidMove(game);
+                        out.write(convertMoveToByteArray(move, sendCode, game),0,recvMsgSize);
+                        if(sendCode > 6){game.reset();} // is this necessary
+                    } else {
+    //                    send back error code as move
+                        move = new int[] {3,0,1,0,0}; //code for invalid move
+                        out.write(convertMoveToByteArray(move, ERROR, game),0,recvMsgSize);
+                    }
+
+                    //System.out.println("received: " + recvInts[0] + " " + recvInts[1] + " " + recvInts[2]);
+                    //System.out.println("sending: " + move[0] + " " + move[1]);
                 }
-                
-                //System.out.println("received: " + recvInts[0] + " " + recvInts[1] + " " + recvInts[2]);
-                //System.out.println("sending: " + move[0] + " " + move[1]);
+
+            } catch(SocketException e) {
+                System.out.println("Socket error: " + e.getMessage());
             }
         }
+        
     }
 
     /**
